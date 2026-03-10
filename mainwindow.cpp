@@ -1,7 +1,8 @@
 #include "mainwindow.h"
 
 #include <QFileDialog>
-
+#include <QSettings>
+#include <QCloseEvent>
 #include "./ui_mainwindow.h"
 #include "logger.h"
 
@@ -10,6 +11,16 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    QSettings settings("Logger", "Gitlab");
+
+    // Load values from settings
+    ui->txtUrl->setText(settings.value("url", "https://gitlab.example.com/project.git").toString());
+    ui->txtToken->setText(settings.value("token", "").toString());
+    ui->txtDestination->setText(settings.value("destination", "C:/").toString());
+
+    restoreGeometry(settings.value("geometry").toByteArray());
+    restoreState(settings.value("windowState").toByteArray());
 
     logger = new Logger(this);
 
@@ -33,6 +44,7 @@ void MainWindow::onBtnBrowseClicked()
 
 void MainWindow::onBtnGenerateClicked()
 {
+
     logger->generateLog(ui->txtUrl->text(), ui->txtToken->text(), ui->txtDestination->text(), 0);
 }
 
@@ -95,5 +107,23 @@ QPalette MainWindow::setTheme(Theme theme)
     }
 
     return palette;
+}
 
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    saveSettings();
+    event->accept();
+}
+
+void MainWindow::saveSettings() {
+    QSettings settings("Logger", "Gitlab");
+
+    settings.setValue("url", ui->txtUrl->text());
+    settings.setValue("token", ui->txtToken->text());
+    settings.setValue("destination", ui->txtDestination->text());
+
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("windowState", saveState());
+
+    qDebug() << "Settings saved!";
 }

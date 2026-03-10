@@ -94,7 +94,9 @@ QJsonArray Logger::parseJson(const QByteArray &data) {
 void Logger::savePrettyJson(const QJsonArray &jsonArray, QString filePath) {
     QJsonDocument doc(jsonArray);
 
-    QFile file(filePath + "/gitlab_log.json");
+    QString now = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
+
+    QFile file(filePath + "/gitlab_log_" + now + ".json");
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         file.write(doc.toJson(QJsonDocument::Indented));
         file.close();

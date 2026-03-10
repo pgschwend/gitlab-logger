@@ -32,5 +32,9 @@ private:
     Logger *logger;
     void onBtnBrowseClicked();
     void onBtnGenerateClicked();
+    void saveSettings();
+
+protected:
+    void closeEvent(QCloseEvent *event);
 };
 #endif // MAINWINDOW_H
