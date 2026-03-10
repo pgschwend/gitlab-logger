@@ -60,7 +60,8 @@ void Logger::generateLog(QString repoUrl, QString token, QString destination, in
                 qDebug() << "All commits received!";
 
                 QJsonArray jsonArray = parseJson(jsonData);
-                this->savePrettyJson(jsonArray, destination);
+                // this->savePrettyJson(jsonArray, destination);
+                this->saveToCsv(jsonArray, destination);
             }
         }
         reply->deleteLater();
@@ -82,7 +83,8 @@ QJsonArray Logger::parseJson(const QByteArray &data) {
 
         // Errors, which Gitlab delivered:
         QString shortId = obj["short_id"].toString();
-        QString message = obj["title"].toString();
+        QString title   = obj["title"].toString();
+        QString message = obj["message"].toString();
         QString author  = obj["author_name"].toString();
         QString date    = obj["created_at"].toString();
 
@@ -101,4 +103,50 @@ void Logger::savePrettyJson(const QJsonArray &jsonArray, QString filePath) {
         file.write(doc.toJson(QJsonDocument::Indented));
         file.close();
     }
+}
+
+void Logger::saveToCsv(const QJsonArray &jsonArray, QString filePath) {
+
+    QString now = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
+
+    QFile file(filePath + "/gitlab_log_" + now + ".csv");
+    // Wichtig: UTF-8 BOM für Excel-Kompatibilität aktivieren
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qDebug() << "Fehler beim Öffnen der Datei!";
+        return;
+    }
+
+    QTextStream out(&file);
+    out.setGenerateByteOrderMark(true); // Verhindert "Hieroglyphen" bei Umlauten in Excel
+
+    // 1. Spaltenüberschriften (Passe die Attribute hier an)
+    out << "Short ID;Author;Date;Title;Message\n";
+
+    // 2. Das Array durchlaufen
+    for (const QJsonValue &value : jsonArray) {
+        QJsonObject obj = value.toObject();
+
+        // Attribute aus dem JSON extrahieren
+        QString id      = obj["short_id"].toString();
+        QString author  = obj["author_name"].toString();
+        QString date    = obj["created_at"].toString();
+        QString title   = obj["title"].toString();
+        QString message = obj["message"].toString();
+
+        // 3. Daten "säubern" (WICHTIG für CSV)
+        // Entfernt Zeilenumbrüche und ersetzt Semikolons, damit die Spalten nicht verrutschen
+        title = title.simplified().replace(";", ",");
+        message = message.simplified().replace(";", ",");
+        author  = author.simplified().replace(";", ",");
+
+        // 4. In die Datei schreiben
+        out << id << ";"
+            << author << ";"
+            << date << ";"
+            << title << ";"
+            << message << "\n";
+    }
+
+    file.close();
+    qDebug() << "CSV erfolgreich gespeichert unter:" << file.fileName();
 }

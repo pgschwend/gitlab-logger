@@ -14,6 +14,7 @@ private:
     QNetworkAccessManager *manager;
     QJsonArray parseJson(const QByteArray &data);
     void savePrettyJson(const QJsonArray &jsonArray, QString filePath);
+    void saveToCsv(const QJsonArray &jsonArray, QString filePath);
 
 public:
     explicit Logger(QObject *parent = nullptr) : QObject(parent) {
