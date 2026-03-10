@@ -59,7 +59,7 @@ void MainWindow::onBtnBrowseClicked()
 
 void MainWindow::onBtnGenerateClicked()
 {
-    logger->generateLog(ui->txtUrl->text(), ui->txtToken->text(), ui->txtDestination->text(), 0);
+    logger->getRepoTags(ui->txtUrl->text(), ui->txtToken->text(), ui->txtDestination->text());
 }
 
 QPalette MainWindow::setTheme(Theme theme)

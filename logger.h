@@ -4,10 +4,10 @@
 
 #ifndef GITLAB_LOGGER_LOGGER_H
 #define GITLAB_LOGGER_LOGGER_H
-#include <QObject>
-#include <QtNetwork/QNetworkAccessManager>
+
 #include <QtNetwork/QNetworkReply>
-#include <QtNetwork/QNetworkRequest>
+#include <QJsonArray>
+
 
 class Logger : public QObject {
 private:
@@ -15,6 +15,8 @@ private:
     QJsonArray parseJson(const QByteArray &data);
     void savePrettyJson(const QJsonArray &jsonArray, QString filePath);
     void saveToCsv(const QJsonArray &jsonArray, QString filePath);
+    QMap<QString, QString> tagMap;
+    QJsonArray commitCollection;
 
 public:
     explicit Logger(QObject *parent = nullptr) : QObject(parent) {
@@ -22,6 +24,7 @@ public:
     }
 
     void generateLog(QString repoUrl, QString token, QString destination, int page);
+    void getRepoTags(QString repoUrl, QString token, QString destination);
 };
 
 
