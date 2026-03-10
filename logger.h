@@ -10,6 +10,7 @@
 
 
 class Logger : public QObject {
+    Q_OBJECT
 private:
     QNetworkAccessManager *manager;
     QJsonArray parseJson(const QByteArray &data);
@@ -25,6 +26,9 @@ public:
 
     void generateLog(QString repoUrl, QString token, QString destination, int page);
     void getRepoTags(QString repoUrl, QString token, QString destination);
+
+    signals:
+    void workFinished();
 };
 
 

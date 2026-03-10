@@ -26,6 +26,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->btnGenerate, &QPushButton::clicked, this, &MainWindow::onBtnGenerateClicked);
     connect(ui->btnBrowse, &QPushButton::clicked, this, &MainWindow::onBtnBrowseClicked);
+
+    connect(logger, &Logger::workFinished, this, [this](){
+        ui->btnGenerate->setEnabled(true);
+        ui->btnGenerate->setText("Generate");
+    });
 }
 
 MainWindow::~MainWindow()
@@ -59,6 +64,8 @@ void MainWindow::onBtnBrowseClicked()
 
 void MainWindow::onBtnGenerateClicked()
 {
+    ui->btnGenerate->setEnabled(false);
+    ui->btnGenerate->setText("In Progress");
     logger->getRepoTags(ui->txtUrl->text(), ui->txtToken->text(), ui->txtDestination->text());
 }
 

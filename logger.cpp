@@ -108,6 +108,7 @@ void Logger::generateLog(QString repoUrl, QString token, QString destination, in
                 }
 
                 commitCollection = QJsonArray();
+                emit workFinished();
             }
         }
         reply->deleteLater();
