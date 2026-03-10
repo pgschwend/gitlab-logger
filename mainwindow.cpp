@@ -35,16 +35,30 @@ MainWindow::~MainWindow()
 
 void MainWindow::onBtnBrowseClicked()
 {
-    QString path = QFileDialog::getExistingDirectory(this, "Choose path");
+    // Take existing path from textfield
+    QString currentPath = ui->txtDestination->text().trimmed();
 
-    if (!path.isEmpty()) {
-        ui->txtDestination->setText(path);
+    // If textfield is empty, take a default starting path
+    if (currentPath.isEmpty()) {
+        currentPath = QDir::homePath();
+    }
+
+    // Open dialog
+    QString selectedFile = QFileDialog::getSaveFileName(
+        this,
+        "Choose destination",
+        currentPath,  // <-- Choose existing path from texfield!
+        "CSV Files (*.csv);;JSON Files (*.json);;All Files (*)"
+    );
+
+    // If user has not canceled, set path
+    if (!selectedFile.isEmpty()) {
+        ui->txtDestination->setText(selectedFile);
     }
 }
 
 void MainWindow::onBtnGenerateClicked()
 {
-
     logger->generateLog(ui->txtUrl->text(), ui->txtToken->text(), ui->txtDestination->text(), 0);
 }
 
@@ -54,7 +68,6 @@ QPalette MainWindow::setTheme(Theme theme)
 
     if(theme == Dark)
     {
-
         palette.setColor(QPalette::Window, QColor(45,45,45));
         palette.setColor(QPalette::WindowText, Qt::white);
         palette.setColor(QPalette::Base, QColor(30,30,30));

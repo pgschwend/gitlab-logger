@@ -61,7 +61,12 @@ void Logger::generateLog(QString repoUrl, QString token, QString destination, in
 
                 QJsonArray jsonArray = parseJson(jsonData);
                 // this->savePrettyJson(jsonArray, destination);
-                this->saveToCsv(jsonArray, destination);
+                if (destination.contains(".json")) {
+                    this->savePrettyJson(jsonArray, destination);
+                }
+                else if (destination.contains(".csv")) {
+                    this->saveToCsv(jsonArray, destination);
+                }
             }
         }
         reply->deleteLater();
@@ -98,7 +103,7 @@ void Logger::savePrettyJson(const QJsonArray &jsonArray, QString filePath) {
 
     QString now = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
 
-    QFile file(filePath + "/gitlab_log_" + now + ".json");
+    QFile file(filePath);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         file.write(doc.toJson(QJsonDocument::Indented));
         file.close();
@@ -109,7 +114,7 @@ void Logger::saveToCsv(const QJsonArray &jsonArray, QString filePath) {
 
     QString now = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
 
-    QFile file(filePath + "/gitlab_log_" + now + ".csv");
+    QFile file(filePath);
     // Wichtig: UTF-8 BOM für Excel-Kompatibilität aktivieren
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qDebug() << "Fehler beim Öffnen der Datei!";
