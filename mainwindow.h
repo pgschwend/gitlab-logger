@@ -9,6 +9,7 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
+class Logger;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -28,5 +29,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    Logger *logger;
+    void onBtnBrowseClicked();
+    void onBtnGenerateClicked();
 };
 #endif // MAINWINDOW_H

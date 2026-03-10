@@ -4,9 +4,22 @@
 
 #ifndef GITLAB_LOGGER_LOGGER_H
 #define GITLAB_LOGGER_LOGGER_H
+#include <QObject>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkRequest>
 
+class Logger : public QObject {
+private:
+    QNetworkAccessManager *manager;
+    void parseJson(const QByteArray &data);
 
-class logger {
+public:
+    explicit Logger(QObject *parent = nullptr) : QObject(parent) {
+        manager = new QNetworkAccessManager(this);
+    }
+
+    void generateLog(QString repoUrl, QString token, QString destination, int page);
 };
 
 
