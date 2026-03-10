@@ -12,7 +12,8 @@
 class Logger : public QObject {
 private:
     QNetworkAccessManager *manager;
-    void parseJson(const QByteArray &data);
+    QJsonArray parseJson(const QByteArray &data);
+    void savePrettyJson(const QJsonArray &jsonArray, QString filePath);
 
 public:
     explicit Logger(QObject *parent = nullptr) : QObject(parent) {
